@@ -19,7 +19,6 @@ export async function GET(request: Request) {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
       },
-      // evita colgarte indefinidamente
       signal: AbortSignal.timeout(10_000),
     });
 

@@ -27,7 +27,9 @@ export async function GET(request: Request) {
 
   if (!rl.ok) {
     return new Response(
-      JSON.stringify({ error: "Demasiadas descargas. Intenta de nuevo en unos segundos." }),
+      JSON.stringify({
+        error: "Demasiadas descargas. Intenta de nuevo en unos segundos.",
+      }),
       {
         status: 429,
         headers: {
@@ -56,7 +58,6 @@ export async function GET(request: Request) {
     const { stream, kill } = streamVideo(v.url);
     const filename = `${safeFilename(title)}.mp4`;
 
-    // mata proceso si el cliente aborta
     request.signal.addEventListener("abort", () => {
       try {
         kill();
@@ -65,7 +66,9 @@ export async function GET(request: Request) {
 
     const webStream = new ReadableStream({
       start(controller) {
-        stream.on("data", (chunk: Buffer) => controller.enqueue(new Uint8Array(chunk)));
+        stream.on("data", (chunk: Buffer) =>
+          controller.enqueue(new Uint8Array(chunk))
+        );
         stream.on("end", () => controller.close());
         stream.on("error", (err: Error) => {
           console.error("[/api/stream] Stream error:", err.message);
