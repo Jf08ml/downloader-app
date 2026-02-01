@@ -1,24 +1,21 @@
-// src/lib/ytdlp.ts
 import { spawn, execFile } from "child_process";
 import type { Readable } from "stream";
 
 const YT_DLP_BIN = process.env.YT_DLP_PATH || "yt-dlp";
+const YT_DLP_COOKIES = process.env.YT_DLP_COOKIES; // <-- NUEVO
 
-/**
- * Formato por defecto para STREAM:
- * - "b[ext=mp4]/b" = más estable para streaming directo (progresivo).
- *
- * Si quieres intentar mejor calidad (puede requerir merge/ffmpeg y NO siempre es streaming real-time):
- *   YT_DLP_STREAM_FORMAT="bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b"
- */
-const STREAM_FORMAT =
-  process.env.YT_DLP_STREAM_FORMAT || "b[ext=mp4]/b";
+const STREAM_FORMAT = process.env.YT_DLP_STREAM_FORMAT || "b[ext=mp4]/b";
 
 export interface VideoInfo {
   title: string;
   thumbnail: string;
   duration: number | null;
   ext: string;
+}
+
+function cookiesArgs(): string[] {
+  // Si existe ruta de cookies, se la pasamos a yt-dlp
+  return YT_DLP_COOKIES ? ["--cookies", YT_DLP_COOKIES] : [];
 }
 
 /**
@@ -29,6 +26,7 @@ export function getVideoInfo(url: string): Promise<VideoInfo> {
     execFile(
       YT_DLP_BIN,
       [
+        ...cookiesArgs(), // <-- NUEVO
         "--dump-json",
         "--no-warnings",
         "--no-playlist",
@@ -72,15 +70,13 @@ export function getVideoInfo(url: string): Promise<VideoInfo> {
 /**
  * Inicia yt-dlp para transmitir el video por stdout.
  * Retorna el stream de Node.js y una funcion kill para abortar.
- *
- * Nota: si usas un formato que requiere merge (bv+ba),
- * yt-dlp puede necesitar ffmpeg y podría no streamear “en vivo”.
  */
 export function streamVideo(url: string): {
   stream: Readable;
   kill: () => void;
 } {
   const args = [
+    ...cookiesArgs(), // <-- NUEVO
     "-f",
     STREAM_FORMAT,
     "--no-warnings",
@@ -105,9 +101,7 @@ export function streamVideo(url: string): {
 
   const kill = () => {
     try {
-      // SIGTERM primero
       child.kill("SIGTERM");
-      // si no cae, SIGKILL al rato
       setTimeout(() => {
         try {
           child.kill("SIGKILL");

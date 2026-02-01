@@ -244,50 +244,50 @@ export default async function Page({
 
   return (
     <main className="min-h-screen text-white bg-slate-950">
-      {/* Selector arriba derecha */}
-      <div className="absolute right-1 top-1">
+      {/* Selector arriba derecha, mejor responsive */}
+      <div className="fixed right-2 top-2 z-20 sm:right-4 sm:top-4">
         <LanguageSwitcher />
       </div>
-      {/* Fondo decorativo */}
+      {/* Fondo decorativo, menos opacidad en móvil */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0 opacity-30 sm:opacity-40"
         style={{
           background:
             "radial-gradient(1000px 500px at 15% 0%, rgba(59,130,246,0.22), transparent 55%), radial-gradient(900px 500px at 85% 0%, rgba(168,85,247,0.20), transparent 55%)",
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-4xl px-6 py-14">
+      <div className="relative mx-auto w-full max-w-4xl px-3 sm:px-6 py-8 sm:py-14">
         {/* H1 + contenido indexable */}
         <header className="text-center space-y-4 relative">
-          <p className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/40 px-4 py-2 text-xs text-slate-200">
+          <p className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/40 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm text-slate-200">
             <span className="h-2 w-2 rounded-full bg-green-500" />
             {copy.brand}
           </p>
 
-          <h1 className="text-balance text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-300 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-balance text-2xl xs:text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-300 to-purple-400 bg-clip-text text-transparent">
             {copy.h1}
           </h1>
 
-          <p className="mx-auto max-w-2xl text-pretty text-slate-300">
+          <p className="mx-auto max-w-xl sm:max-w-2xl text-pretty text-slate-300 text-sm sm:text-base">
             {copy.subtitle}
           </p>
         </header>
 
         {/* UI interactiva */}
-        <section aria-label="Downloader" className="mt-10">
+        <section aria-label="Downloader" className="mt-8 sm:mt-10">
           <HomeClient locale={locale} />
         </section>
 
         {/* Features */}
-        <section className="mt-14" aria-label={copy.featuresTitle}>
-          <h2 className="text-xl font-semibold">{copy.featuresTitle}</h2>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        <section className="mt-10 sm:mt-14" aria-label={copy.featuresTitle}>
+          <h2 className="text-lg sm:text-xl font-semibold">{copy.featuresTitle}</h2>
+          <ul className="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2">
             {copy.featureList.map((f) => (
               <li
                 key={f}
-                className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 text-slate-200"
+                className="rounded-xl border border-slate-800 bg-slate-900/40 p-3 sm:p-4 text-slate-200 text-sm sm:text-base"
               >
                 {f}
               </li>
@@ -296,27 +296,27 @@ export default async function Page({
         </section>
 
         {/* FAQ */}
-        <section className="mt-14" aria-label={copy.faqTitle}>
-          <h2 className="text-xl font-semibold">{copy.faqTitle}</h2>
-          <div className="mt-4 space-y-3">
+        <section className="mt-10 sm:mt-14" aria-label={copy.faqTitle}>
+          <h2 className="text-lg sm:text-xl font-semibold">{copy.faqTitle}</h2>
+          <div className="mt-4 space-y-2 sm:space-y-3">
             {copy.faq.map((item) => (
               <details
                 key={item.q}
-                className="group rounded-xl border border-slate-800 bg-slate-900/40 p-4"
+                className="group rounded-xl border border-slate-800 bg-slate-900/40 p-3 sm:p-4"
               >
-                <summary className="cursor-pointer list-none font-medium text-slate-100">
+                <summary className="cursor-pointer list-none font-medium text-slate-100 text-sm sm:text-base">
                   {item.q}
                   <span className="float-right text-slate-400 group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <p className="mt-3 text-slate-300">{item.a}</p>
+                <p className="mt-2 sm:mt-3 text-slate-300 text-xs sm:text-sm">{item.a}</p>
               </details>
             ))}
           </div>
         </section>
 
-        <footer className="mt-16 text-center text-xs text-slate-500">
+        <footer className="mt-12 sm:mt-16 text-center text-xs text-slate-500 px-2">
           <p>{copy.legalNote}</p>
         </footer>
       </div>
