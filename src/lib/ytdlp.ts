@@ -2,20 +2,26 @@ import { spawn, execFile } from "child_process";
 import type { Readable } from "stream";
 
 const YT_DLP_BIN = process.env.YT_DLP_PATH || "yt-dlp";
-const YT_DLP_COOKIES = process.env.YT_DLP_COOKIES; // <-- NUEVO
+const YT_DLP_COOKIES = process.env.YT_DLP_COOKIES;
 
 const STREAM_FORMAT = process.env.YT_DLP_STREAM_FORMAT || "b[ext=mp4]/b";
+
+const YT_DLP_REMOTE_COMPONENTS = process.env.YT_DLP_REMOTE_COMPONENTS || "ejs:github";
+
+function authAndEjsArgs(): string[] {
+  const args: string[] = [];
+  if (YT_DLP_COOKIES) args.push("--cookies", YT_DLP_COOKIES);
+  // Habilita EJS solver (necesario para YouTube en muchos casos)
+  if (YT_DLP_REMOTE_COMPONENTS) args.push("--remote-components", YT_DLP_REMOTE_COMPONENTS);
+  return args;
+}
+
 
 export interface VideoInfo {
   title: string;
   thumbnail: string;
   duration: number | null;
   ext: string;
-}
-
-function cookiesArgs(): string[] {
-  // Si existe ruta de cookies, se la pasamos a yt-dlp
-  return YT_DLP_COOKIES ? ["--cookies", YT_DLP_COOKIES] : [];
 }
 
 /**
@@ -26,7 +32,7 @@ export function getVideoInfo(url: string): Promise<VideoInfo> {
     execFile(
       YT_DLP_BIN,
       [
-        ...cookiesArgs(), // <-- NUEVO
+        ...authAndEjsArgs(),
         "--dump-json",
         "--no-warnings",
         "--no-playlist",
@@ -76,7 +82,7 @@ export function streamVideo(url: string): {
   kill: () => void;
 } {
   const args = [
-    ...cookiesArgs(), // <-- NUEVO
+    ...authAndEjsArgs(),
     "-f",
     STREAM_FORMAT,
     "--no-warnings",
